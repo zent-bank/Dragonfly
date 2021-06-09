@@ -1,0 +1,102 @@
+import 'package:dragon_fly_frontend/constants.dart';
+import 'package:dragon_fly_frontend/widgets/bottom_nav_bar.dart';
+import 'package:dragon_fly_frontend/widgets/search_bar.dart';
+import 'package:dragon_fly_frontend/widgets/session_card.dart';
+import 'package:flutter/material.dart';
+
+class DetailsScreen extends StatelessWidget {
+  const DetailsScreen({ Key? key }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    return Scaffold(
+      bottomNavigationBar: BottomNavBar(),
+      body: Stack(
+        children: <Widget>[
+          Container(
+            height: size.height * .44,
+            decoration: BoxDecoration(
+              color: kBlueLightColor,
+              image: DecorationImage(
+                image: AssetImage("assets/images/meditation_bg.png"),
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(
+                      height: size.height * .05,
+                    ),
+                    Text(
+                      "Meditation", 
+                      style: Theme.of(context).textTheme.headline4!.copyWith(fontWeight: FontWeight.w900),
+                    ),
+                    SizedBox(
+                      height: 10
+                    ),
+                    Text(
+                      "3-10 MIN Course",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      width: size.width * .6, // it just take 60% of total width
+                      child: Text(
+                        "Live happier and healthier by learning the fundamentals of mediation and mindfulness"
+                      ),
+                    ),
+                    SizedBox(
+                      width: size.width * .5, // it just take 50% width
+                      child: SearchBar(),
+                    ),
+                    Wrap(
+                      spacing: 20,
+                      runSpacing: 20,
+                      children: <Widget>[
+                        SessionCard(
+                          sessionNum: 1, 
+                          isDone: true,
+                          press: () {},
+                        ),
+                        SessionCard(
+                          sessionNum: 2, 
+                          press: () {},
+                        ),
+                        SessionCard(
+                          sessionNum: 3, 
+                          press: () {},
+                        ),
+                        SessionCard(
+                          sessionNum: 4, 
+                          press: () {},
+                        ),
+                        SessionCard(
+                          sessionNum: 5, 
+                          press: () {},
+                        ),
+                        SessionCard(
+                          sessionNum: 6, 
+                          press: () {},
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              )
+            )
+          ),
+        ],
+      ),
+    );
+  }
+}
+

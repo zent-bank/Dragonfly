@@ -1,0 +1,73 @@
+const ethers = require('ethers')
+// const abi = require('./abi')
+const config = require('./config/config')
+const abi = [
+    'function totalSupply() public view returns (uint256)',
+    'function balanceOf(address account) public view returns (uint256)',
+    'function transfer(address recipient, uint256 amount) public returns (bool)',
+    'function allowance(address owner, address spender) public view returns (uint256)',
+    'function approve(address spender, uint256 amount) public returns (bool)',
+    'function transferFrom(address sender, address recipient, uint256 amount) public returns (bool)'
+]
+const CONTRACT_ADDRESS = config.address.dgc_contract
+const MY_ADDRESS = config.address.senderWallet
+const MY_PRIVATE_KEY = config.walletPrivateKey
+const PRIVATE_KEY_2 = "db1b2ed2c46b5f55f5d43bdd9b34facd3a038c8ee1fc67bb6cc326d7c3935523"
+// const provider = new ethers.providers.JsonRpcProvider('https://rinkeby.infura.io/v3/7a9ed5d28c7e4208b3e308b33f4d0ae0')
+const provider = new ethers.getDefaultProvider('rinkeby')
+
+getBalance = async () => {
+    try{
+        // const provider = new ethers.providers.InfuraProvider('rinkeby','7a9ed5d28c7e4208b3e308b33f4d0ae0')
+        const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider)
+        const balance = await contract.balanceOf(MY_ADDRESS)
+        console.log(ethers.utils.formatUnits(balance,18))
+
+    }catch(err){
+        console.error(err)
+    }
+}
+
+transferToken = async (transferAmount) => {
+    try{
+        const senderWallet = new ethers.Wallet(PRIVATE_KEY_2,provider)
+        const contract = new ethers.Contract(CONTRACT_ADDRESS,abi, senderWallet)
+        // const receiveWallet = '0xd389b5A945670D68681c53fE3C5cCA973CaC53F4'
+        const receiveWallet = '0xB8F29D0517dEbd76f007e6c07C3bCcCD146fF14A'
+        const amount = ethers.utils.parseUnits(transferAmount,18)
+        const response = await contract.transfer(receiveWallet, amount)
+        const result = await response.wait()
+        console.log("result.blockHash: ", result.blockHash)
+        console.log("result.transactionHash: ", result.transactionHash)
+    }catch(err){
+        console.error(err)
+    }
+}
+
+transferFrom = async (fromAddress, toAddress, transferAmount) => {
+    let amount = 0
+    try{
+        const senderWallet = new ethers.Wallet(PRIVATE_KEY_2,provider)
+        const contract = new ethers.Contract(config.address.dgc_contract,abi, senderWallet)
+        if(transferAmount){
+            amount = ethers.utils.parseUnits(transferAmount,18)
+        }
+        const response = await contract.transferFrom(fromAddress, toAddress, amount)
+        const result = await response.wait()
+        console.log("result.blockHash: ", result.blockHash)
+        console.log("result.transactionHash: ", result.transactionHash)
+        return result.transactionHash
+    }catch(err){
+        console.error(err)
+        throw err
+    }
+}
+
+(async () => {
+    await getBalance()
+    console.log("---------------")
+    console.log("transfer token")
+    await transferToken('150')
+    console.log("---------------")
+    await getBalance()
+})()
